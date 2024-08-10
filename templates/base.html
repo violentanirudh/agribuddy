@@ -25,8 +25,9 @@
     {% block style %}{% endblock %}
   </head>
   <body class="flex h-screen bg-lime-50">
-    {% block content %} {% endblock %} {% with messages =
-    get_flashed_messages(with_categories=true) %} {% if messages %}
+    {% block content %} {% endblock %} {%
+    with messages = get_flashed_messages(with_categories=true) %} {% if messages
+    %}
     <div
       id="flash-message"
       class="fixed top-4 transform right-4 w-80 text-left px-4 py-2 rounded"
@@ -62,6 +63,7 @@
         }
       }, 2000);
     </script>
+
     {% endif %} {% endwith %} {% block script%} {% endblock %}
   </body>
 </html>

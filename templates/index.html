@@ -14,7 +14,7 @@
     75% { content: "····"; }
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+      display: none;
   }
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -45,13 +45,20 @@ const toggleModal = () => {
   document.querySelector("#modal").classList.toggle("hidden");
 };
 
+document.querySelector('#query-input').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault()
+    sendQuery()
+  }
+})
+
 const sendQuery = async () => {
   const queryInput = document.getElementById("query-input");
   const query = queryInput.value.trim();
   const sendButton = document.getElementById("query-button");
 
-  if (!query) {
-    alert("Please enter a query");
+  if (query.length < 20) {
+    alert("Please enter a query. Minimum 20 characters");
     return;
   }
 

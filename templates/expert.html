@@ -42,6 +42,7 @@
 {% endblock %}
 
 {% block content %}
+{% include 'components/modal.html' %}
 <div class="flex w-full h-screen">
   <!-- Sidebar -->
   {% include 'components/sidebar.html' %}
@@ -51,7 +52,7 @@
     <div class="w-2/3 mx-auto">
       <h3 class="text-4xl font-bold text-green-950">Expert Blogs</h3>
       <div id="loading-spinner" class="typing mb-4"></div>
-      <ul id="blog-list" class="rounded-md mt-10 border-green-900 overflow-hidden">
+      <ul id="blog-list" class="rounded-md mt-10 z-0 border-green-900 overflow-hidden">
         <!-- Blogs will be injected here -->
       </ul>
       <div id="error-container" class="w-2/3 p-6 bg-red-100 text-red-800 rounded-lg shadow-lg border border-red-200" style="display: none;">
@@ -87,9 +88,9 @@
           const blogs = JSON.parse(data); // Assuming data is already parsed
           blogList.classList.add('border-2')
           blogList.innerHTML = blogs.map(blog => `
-            <li class="p-4 bg-lime-100/20 text-green-950 backdrop-blur-sm flex items-center border-b-2 border-green-900 justify-between">
+            <li class="p-4 bg-lime-100/20 text-green-950 backdrop-blur-sm z-0 flex items-center border-b-2 border-green-900 justify-between">
               <h2 class="text-lg font-semibold truncate">${blog.heading}</h2>
-              <a href="#" class="inline-block bg-green-900 px-4 py-2 text-lime-100 rounded">Read More</a>
+              <a href="javascript:void(0)" onclick="openModal()" class="inline-block bg-green-900 px-4 py-2 text-lime-100 rounded">Read More</a>
             </li>
           `).join('');
         }
@@ -101,5 +102,13 @@
         errorContainer.style.display = 'block';
       });
   });
+
+  function openModal() {
+        document.getElementById("modal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("modal").classList.add("hidden");
+      }
 </script>
 {% endblock %}

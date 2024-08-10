@@ -44,6 +44,8 @@
         </div>
     </div>
 </div>
+
+{% include 'components/modal.html' %}
 {% endblock %}
 
 
@@ -71,7 +73,7 @@
                     loanDiv.innerHTML = `
                         <h3 class="text-2xl font-semibold bg-lime-400 mb-4 flex items-center border-b-2 border-green-900 justify-between px-6 py-3">
                             ${loan.bank_name}
-                            <a href="" class="bg-green-900 text-lime-100 px-6 py-2 rounded text-base">Apply</a>
+                            <a href="javascript:void(0)" onclick="openModal()" class="bg-green-900 text-lime-100 px-6 py-2 rounded text-base">Apply</a>
                         </h3>
                         <div class="p-6 pt-3">
                         <p><strong class="w-32 inline-block">Loan Type:</strong> ${loan.type}</p>
@@ -90,5 +92,13 @@
             loansContainer.innerHTML = `<p class="text-red-500">Failed to load loan offers. Please try again later.</p>`;
         }
     });
+
+    function openModal() {
+        document.getElementById("modal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("modal").classList.add("hidden");
+      }
 </script>
 {% endblock %}
