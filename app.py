@@ -111,8 +111,8 @@ def api_expert_blogs():
 def api_weather_data():
     user_ip = request.remote_addr
     api_key = '4000d0879091471eb13164311240908'
-    # weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q={user_ip}&aqi=no'
-    weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q=14.139.122.120&aqi=no'
+    weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q={user_ip}&aqi=no'
+    # weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q=14.139.122.120&aqi=no'
     
     try:
         # Fetch weather data
@@ -132,7 +132,7 @@ def api_weather_data():
                 f"- Precipitation: {current['precip_mm']} mm ({current['precip_in']} in)\n"
                 f"- Humidity: {current['humidity']}%\n"
                 f"- Cloud Cover: {current['cloud']}%\n\n"
-                f"Based on this data, recommend the best crops for this region and any other advice to enhance agricultural productivity."
+                f"Based on this data, recommend the best crops for this region and any other advice to enhance agricultural productivity. In 1000 words."
             )
             
             try:
@@ -215,7 +215,7 @@ def generate_response():
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
 
-    response = model.generate_content(f"{prompt} in 200 words.")
+    response = model.generate_content(f"PROMPT : {prompt} in 200 words. If prompt isn't related to agriculture then return 'Please specify your query in detail! I'm happy to chat about farming, crops, or anything related to the field.'")
     response_text = response.text
 
     # Store the chat data in the database
@@ -235,7 +235,7 @@ def generate_crop_care():
     data = request.get_json()
     crop_name = data.get('crop_name')
     
-    response = model.generate_content(f"Generate a care instructions for {crop_name} production in 400 words, use lists.")
+    response = model.generate_content(f"PROMPT : Generate a care instructions for {crop_name} (crop) production also specify timing in months or days about proper growth in 800 words, use lists. If crop isn't valid return a polite text just to ensure that user enters a valid crop name.")
     response_text = response.text
     
     return jsonify({"response": response_text})

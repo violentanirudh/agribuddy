@@ -13,12 +13,25 @@
     50% { content: "···"; }
     75% { content: "····"; }
   }
-  .scrollbar-hide::-webkit-scrollbar {
-      display: none;
+  ::-webkit-scrollbar {
+    width: 1rem;
   }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+/* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 4px transparent; 
+    border-radius: 1rem;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #14532d20; 
+    border-radius: 1rem;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #14532d80; 
   }
 </style>
 {% endblock %}
@@ -69,7 +82,7 @@ const sendQuery = async () => {
   const chatbox = document.getElementById("chatbox");
   
   const userMessage = document.createElement("div");
-  userMessage.className = "p-4 rounded-r-2xl w-2/3 rounded-bl-2xl text-lime-200 bg-green-900 border-2 border-green-900 marked self-end";
+  userMessage.className = "p-4 rounded-r-2xl w-fit max-w-2/3 rounded-bl-2xl text-lime-100 bg-green-900 border-2 border-green-900 marked self-end";
   userMessage.textContent = query;
   chatbox.appendChild(userMessage);
 
