@@ -1,0 +1,14 @@
+<div class="w-2/3 mx-auto relative h-screen py-8">
+    <div id="chatbox" class="flex flex-col py-8 gap-8 justify-start text-green-950 overflow-y-auto h-[90%] pr-4">
+        {% for chat in chats %}
+        <div class="p-4 rounded-l-2xl w-fit max-w-2/3 rounded-br-2xl self-end bg-green-900 text-lime-50 border-2 border-green-900">
+            {{ chat[1] }}
+        </div>
+        <div class="p-4 rounded-r-2xl w-2/3 rounded-bl-2xl bg-lime-300 text-green-950 border-2 border-green-900 marked" id="markdown">{{ chat[2]|safe }}</div>
+        {% endfor %}
+    </div>
+    <div class="h-24 w-full absolute bottom-10 overflow-hidden flex items-end">
+        <textarea id="query-input" class="w-full bg-lime-100 h-20 resize-none p-4 text-gray-700 border-2 rounded-lg outline-none border-green-900" placeholder="Enter your queries"></textarea>
+        <button id="query-button" class="absolute bottom-2 right-2 px-4 py-2 rounded bg-green-900 text-white" onclick="sendQuery()">Send</button>
+    </div>
+</div>

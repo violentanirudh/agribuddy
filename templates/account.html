@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+    * {
+        font-family: "Poppins";
+    }
+    .bg-green-50 {
+        background-color: rgb(248, 255, 250) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full flex justify-between items-center h-screen mx-auto">
+    {% include 'components/sidebar.html' %}
+    <div class="w-full mx-auto relative h-screen py-8">
+        <form class="p-8 rounded-lg w-2/3 mx-auto" method="post">
+            <h2 class="text-3xl font-bold mb-8">Account Settings</h2>
+            <div class="mb-6">
+                <label for="username" class="block text-green-900 font-semibold mb-2">Username</label>
+                <input type="text" id="username" class="w-full p-4 border-2 rounded-lg border-green-900 outline-none bg-green-50 text-green-900" placeholder="Enter your username" disabled value="{{ user[0] }}">
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block text-green-900 font-semibold mb-2">Email</label>
+                <input type="email" id="email" class="w-full p-4 border-2 rounded-lg border-green-900 outline-none bg-green-50 text-green-900" placeholder="Enter your email" disabled value="{{ user[1] }}">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-green-900 font-semibold mb-2">Password</label>
+                <input type="password" name="password" id="password" class="w-full p-4 border-2 rounded-lg border-green-900 outline-none bg-green-50 text-green-900" placeholder="Enter a new password">
+            </div>
+            <div class="mb-6">
+                <label for="confirm-password" class="block text-green-900 font-semibold mb-2">Confirm Password</label>
+                <input type="password" name="confirm-password" id="confirm-password" class="w-full p-4 border-2 rounded-lg border-green-900 outline-none bg-green-50 text-green-900" placeholder="Confirm your new password">
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="px-6 py-3 rounded bg-green-900 text-white">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

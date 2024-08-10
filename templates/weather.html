@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %} Weather - AgriBuddy {% endblock %}
+{% block style %}
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+  * {
+    font-family: "Poppins";
+  }
+  .label {
+    display: inline-block;
+    width: 200px;
+    font-weight: 600;
+  }
+  .bg-green-50 {
+    background-color: rgb(248, 255, 250) !important;
+  }
+  .typing::after {
+    content: "····";
+    display: inline-block;
+    animation: typing 1s steps(5, end) infinite;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  @keyframes typing {
+    0%, 100% {
+      content: "·";
+    }
+    20% {
+      content: "··";
+    }
+    40% {
+      content: "···";
+    }
+    60% {
+      content: "····";
+    }
+    80% {
+      content: "·····";
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen w-full">
+  <!-- Sidebar -->
+  {% include 'components/sidebar.html' %}
+
+  <!-- Main Content -->
+  <div class="w-full p-8 h-screen overflow-hidden overflow-y-auto">
+    <div class="w-2/3 mx-auto">
+      <h3 class="text-4xl font-bold text-green-950">Weather Details</h3>
+      <p class="text-green-950">Get real-time weather updates for your location. View current conditions, forecasts, and details like temperature and humidity. Use this page to plan your farming tasks based on the latest weather data.</p>
+      <div id="loading-spinner" class="typing mb-8"></div>
+      <div id="weather-container" class="px-8 py-4 bg-lime-400 rounded-lg border-2 border-green-900 my-10 marked hidden">
+        <ul id="weather-list" class="mt-2 pl-0">
+          <!-- Weather data will be injected here -->
+        </ul>
+      </div>
+
+      <div id="report-container" class="p-8 bg-lime-50 rounded-lg border-2 border-green-900" style="display: none;">
+        <h3 class="text-2xl font-semibold mb-4">REPORT</h3>
+        <div class="markdown marked" id="gpt-response"></div>
+      </div>
+
+      <div id="error-container" class="w-2/3 p-6 bg-red-100 text-red-800 rounded-lg shadow-lg border border-red-200" style="display: none;">
+        <h3 class="text-2xl font-semibold mb-4">Error</h3>
+        <p id="error-message"></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const weatherContainer = document.getElementById('weather-container');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const reportContainer = document.getElementById('report-container');
+    const gptResponse = document.getElementById('gpt-response');
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+
+    // Show the typing animation
+    loadingSpinner.style.display = 'block';
+
+    fetch('/api/weather-data')
+      .then(response => response.json())
+      .then(data => {
+        // Hide the typing animation
+        loadingSpinner.style.display = 'none';
+
+        if (data.error) {
+          errorMessage.textContent = data.error;
+          errorContainer.style.display = 'block';
+        } else {
+          const weatherList = document.getElementById('weather-list');
+          document.querySelector('#weather-container').classList.remove('hidden')
+          weatherList.innerHTML = `
+            <li><span class="label">Location:</span> ${data.weather.location.name}, ${data.weather.location.region}, ${data.weather.location.country}</li>
+            <li><span class="label">Temperature:</span> ${data.weather.current.temp_c}°C (${data.weather.current.temp_f}°F)</li>
+            <li><span class="label">Condition:</span> ${data.weather.current.condition.text}</li>
+            <li><span class="label">Wind Speed:</span> ${data.weather.current.wind_kph} kph (${data.weather.current.wind_mph} mph)</li>
+            <li><span class="label">Pressure:</span> ${data.weather.current.pressure_mb} mb (${data.weather.current.pressure_in} in)</li>
+            <li><span class="label">Precipitation:</span> ${data.weather.current.precip_mm} mm (${data.weather.current.precip_in} in)</li>
+            <li><span class="label">Humidity:</span> ${data.weather.current.humidity}%</li>
+            <li><span class="label">Cloud Cover:</span> ${data.weather.current.cloud}%</li>
+          `;
+          
+          reportContainer.style.display = 'block';
+          gptResponse.innerHTML = marked.parse(data.report);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching weather data:', error);
+        loadingSpinner.style.display = 'none'; // Hide spinner on error
+        errorMessage.textContent = 'Failed to fetch weather data.';
+        errorContainer.style.display = 'block';
+      });
+  });
+</script>
+{% endblock %}

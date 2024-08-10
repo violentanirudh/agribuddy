@@ -1,0 +1,87 @@
+{% extends "base.html" %} 
+
+{% block style %}
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+  * {
+    font-family: "Poppins";
+  }
+  .typing::after {
+    content: "····";
+    display: inline-block;
+    animation: typing 1s steps(5, end) infinite;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  @keyframes typing {
+    0%, 100% {
+      content: "·";
+    }
+    20% {
+      content: "··";
+    }
+    40% {
+      content: "···";
+    }
+    60% {
+      content: "····";
+    }
+    80% {
+      content: "·····";
+    }
+  }
+</style>
+{% endblock %} 
+
+{% block content %}
+<div class="w-full flex justify-between items-center h-screen mx-auto">
+  {% include 'components/sidebar.html' %}
+  <div class="w-[calc(100%-20rem)] h-screen px-10 overflow-y-scroll">
+    <div class="w-2/3 mx-auto py-10">
+        {% include 'components/form.html' %}
+        <div id="loading-spinner" class="typing mb-4 hidden"></div>
+        <div id="response" class="mt-8 marked"></div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+  document.getElementById("crop-care-form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const cropName = document.getElementById("crop-name").value.trim();
+
+    if (!cropName) {
+      alert("Please fill in both fields");
+      return;
+    }
+
+    const responseContainer = document.getElementById("response");
+    document.querySelector('#loading-spinner').classList.remove('hidden')
+
+    try {
+      const response = await fetch("/generate-crop-care", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ crop_name: cropName }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        responseContainer.innerHTML = `<div class="p-6 bg-lime-100/20 backdrop-blur-sm rounded-lg shadow-lg border-2 border-green-900"><h3 class="text-2xl font-semibold mb-4">Crop Care Instructions</h3><div>${marked.parse(data.response)}</div></div>`;
+      } else {
+        responseContainer.innerHTML = `<div class="p-6 bg-red-100 text-red-800 rounded-lg shadow-lg border border-red-200"><h3 class="text-2xl font-semibold mb-4">Error</h3><p>${data.error}</p></div>`;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      responseContainer.innerHTML = `<div class="p-6 bg-red-100 text-red-800 rounded-lg shadow-lg border border-red-200"><h3 class="text-2xl font-semibold mb-4">Error</h3><p>Failed to generate response</p></div>`;
+    } finally {
+        document.querySelector('#loading-spinner').classList.add('hidden')
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block style %}
+<style>
+  .typing::after {
+    content: "····";
+    display: inline-block;
+    animation: typing 1s steps(4, end) infinite;
+    font-size: 1.5rem;
+  }
+  @keyframes typing {
+    0%, 100% { content: "·"; }
+    25% { content: "··"; }
+    50% { content: "···"; }
+    75% { content: "····"; }
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen w-full">
+  {% include 'components/sidebar.html' %}
+  <div class="flex-1 flex flex-col">
+    {% include 'components/chatbox.html' %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("#markdown").forEach((element) => {
+    element.innerHTML = marked.parse(element.innerHTML);
+  });
+});
+
+const toggleModal = () => {
+  document.querySelector("#modal").classList.toggle("hidden");
+};
+
+const sendQuery = async () => {
+  const queryInput = document.getElementById("query-input");
+  const query = queryInput.value.trim();
+  const sendButton = document.getElementById("query-button");
+
+  if (!query) {
+    alert("Please enter a query");
+    return;
+  }
+
+  queryInput.disabled = true;
+  sendButton.disabled = true;
+  sendButton.textContent = "Sending...";
+
+  const chatbox = document.getElementById("chatbox");
+  
+  const userMessage = document.createElement("div");
+  userMessage.className = "p-4 rounded-r-2xl w-2/3 rounded-bl-2xl text-lime-200 bg-green-900 border-2 border-green-900 marked self-end";
+  userMessage.textContent = query;
+  chatbox.appendChild(userMessage);
+
+  const typingIndicator = document.createElement("div");
+  typingIndicator.className = "bg-lime-300 p-3 rounded-r-xl w-fit rounded-bl-xl border-2 border-green-900 typing self-start mb-4";
+  typingIndicator.textContent = "";
+  chatbox.appendChild(typingIndicator);
+
+  chatbox.scrollTop = chatbox.scrollHeight;
+
+  try {
+    const response = await fetch("/generate-response", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: query }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      typingIndicator.classList.remove('w-fit')
+      typingIndicator.classList.add('w-2/3')
+      typingIndicator.innerHTML = marked.parse(data.response);
+      typingIndicator.id = "markdown";
+      typingIndicator.classList.remove("typing");
+    } else {
+      alert("Error: " + data.error);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Failed to send query");
+    chatbox.removeChild(typingIndicator);
+  } finally {
+    queryInput.disabled = false;
+    sendButton.disabled = false;
+    queryInput.value = "";
+    sendButton.textContent = "Send";
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+};
+</script>
+{% endblock %}

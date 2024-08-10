@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    .typing::after {
+        content: "····";
+        display: inline-block;
+        animation: typing 1s steps(5, end) infinite;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    @keyframes typing {
+        0%, 100% {
+            content: "·";
+        }
+        20% {
+            content: "··";
+        }
+        40% {
+            content: "···";
+        }
+        60% {
+            content: "····";
+        }
+        80% {
+            content: "·····";
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="w-full flex justify-between items-center h-screen mx-auto">
+    {% include 'components/sidebar.html' %}
+    <div class="w-[calc(100%-20rem)] h-screen px-10 overflow-y-auto">
+        <div class="w-2/3 mx-auto mt-10">
+            <h2 class="text-3xl font-bold">Bank and Loans</h2>
+            <p class="text-green-950">Discover the latest banking services and loan offers available for farmers. Compare options and find financial solutions tailored to your needs. Use this page to apply for loans and manage your finances.</p>
+            <div id="loading-spinner" class="typing"></div>
+        </div>
+        <div id="loans-container" class="flex flex-col gap-6 pt-8 pb-10 w-2/3 mx-auto">
+            <!-- Loan offers will be dynamically loaded here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const loansContainer = document.getElementById("loans-container");
+        const loadingSpinner = document.getElementById("loading-spinner");
+
+        try {
+            // Show the typing animation
+            loadingSpinner.style.display = 'block';
+
+            const response = await fetch('/bank-loans');
+            const data = await response.json();
+
+            // Hide the typing animation
+            loadingSpinner.style.display = 'none';
+
+            if (response.ok) {
+                const list = JSON.parse(data.loans);
+                list.forEach(loan => {
+                    const loanDiv = document.createElement("div");
+                    loanDiv.className = "bg-lime-50 rounded-md border-2 border-green-900 overflow-hidden";
+                    loanDiv.innerHTML = `
+                        <h3 class="text-2xl font-semibold bg-lime-400 mb-4 flex items-center border-b-2 border-green-900 justify-between px-6 py-3">
+                            ${loan.bank_name}
+                            <a href="" class="bg-green-900 text-lime-100 px-6 py-2 rounded text-base">Apply</a>
+                        </h3>
+                        <div class="p-6 pt-3">
+                        <p><strong class="w-32 inline-block">Loan Type:</strong> ${loan.type}</p>
+                        <p><strong class="w-32 inline-block">Interest Rate:</strong> ${loan.interest_rate}</p>
+                        <p><strong class="w-32 inline-block">Eligibility:</strong> ${loan.eligibility}</p>
+                        <p><strong class="w-32 inline-block">Features:</strong> ${loan.features}</p>
+                        <div>
+                    `;
+                    loansContainer.appendChild(loanDiv);
+                });
+            } else {
+                loansContainer.innerHTML = `<p class="text-red-500">Error: ${data.error}</p>`;
+            }
+        } catch (error) {
+            console.error('Error fetching loan offers:', error);
+            loansContainer.innerHTML = `<p class="text-red-500">Failed to load loan offers. Please try again later.</p>`;
+        }
+    });
+</script>
+{% endblock %}

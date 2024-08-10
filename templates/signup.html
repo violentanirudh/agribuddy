@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-8 shadow-md w-96 mx-auto mt-40 h-fit border-t-4 border-b-4 border-green-900">
+    <h2 class="text-2xl font-bold text-green-900 mb-6">Sign Up</h2>
+    <form method="POST">
+        <label class="block mb-4">
+            <span class="text-gray-700">Username</span>
+            <input type="text" name="username" class="block w-full mt-2 bg-green-50 p-2 rounded-md border-2 border-green-900 outline-none" required>
+        </label>
+        <label class="block mb-4">
+            <span class="text-gray-700">Email</span>
+            <input type="text" name="email" class="block w-full mt-2 bg-green-50 p-2 rounded-md border-2 border-green-900 outline-none" required>
+        </label>
+        <label class="block mb-6">
+            <span class="text-gray-700">Password</span>
+            <input type="password" name="password" class="block w-full mt-2 bg-green-50 p-2 rounded-md border-2 border-green-900 outline-none" required>
+        </label>
+        <button type="submit" class="w-full bg-green-900 text-white py-2 rounded-md hover:bg-green-700 transition">Sign Up</button>
+    </form>
+    <p class="mt-4 text-sm text-center text-gray-600">Already have an account? <a href="{{ url_for('signin') }}" class="text-green-900 hover:underline">Log In</a></p>
+</div>
+{% endblock %}
