@@ -7,3 +7,4 @@ werkzeug
 google-generativeai
 typing-extensions
 python-dotenv
+gunicorn==19.7.1
