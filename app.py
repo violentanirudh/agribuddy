@@ -109,10 +109,15 @@ def api_expert_blogs():
 
 @app.route('/api/weather-data')
 def api_weather_data():
-    user_ip = request.remote_addr
+    user_ip = ''
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        user_ip = request.environ['REMOTE_ADDR']
+    else:
+        user_ip = request.environ['HTTP_X_FORWARDED_FOR']
+
     api_key = '4000d0879091471eb13164311240908'
     try:
-        location_request = requests.get(f'http://ipinfo.io/{user_ip}/json')
+        location_request = requests.get(f'https://ipinfo.io/{user_ip}/json')
         location_request = location_request.json()
         weather_url = f'https://api.weatherapi.com/v1/current.json?key={api_key}&q={location_request['loc']}&aqi=no'
     except Exception as e:
