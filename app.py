@@ -72,9 +72,9 @@ def bank_and_loans():
 
 @app.route('/weather')
 def weather():
-    # verification = verify_login()
-    # if verification is not True:
-    #     return verification
+    verification = verify_login()
+    if verification is not True:
+        return verification
 
     return render_template('weather.html', title="Weather", page='weather')
 
@@ -114,6 +114,8 @@ def api_weather_data():
         user_ip = request.environ['REMOTE_ADDR']
     else:
         user_ip = request.environ['HTTP_X_FORWARDED_FOR']
+
+    user_ip = '152.58.60.209'
 
     api_key = '4000d0879091471eb13164311240908'
     try:
