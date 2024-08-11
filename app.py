@@ -111,8 +111,12 @@ def api_expert_blogs():
 def api_weather_data():
     user_ip = request.remote_addr
     api_key = '4000d0879091471eb13164311240908'
-    weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q={user_ip}&aqi=no'
-    # weather_url = f'http://api.weatherapi.com/v1/current.json?key={api_key}&q=14.139.122.120&aqi=no'
+    try:
+        location_request = requests.get(f'http://ipinfo.io/{user_ip}/json')
+        location_request = location_request.json()
+        weather_url = f'https://api.weatherapi.com/v1/current.json?key={api_key}&q={location_request['loc']}&aqi=no'
+    except Exception as e:
+        return jsonify({'error': f"API Error"})
     
     try:
         # Fetch weather data
@@ -145,7 +149,7 @@ def api_weather_data():
                     'report': response_text
                 })
             except Exception as e:
-                return jsonify({'error': f"GPT Error: {str(e)}"})
+                return jsonify({'error': f"Response Error"})
         
         else:
             return jsonify({'error': "Unable to fetch weather data"})
