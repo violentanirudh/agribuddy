@@ -119,7 +119,7 @@ def api_weather_data():
     try:
         location_request = requests.get(f'https://ipinfo.io/{user_ip}/json')
         location_request = location_request.json()
-        weather_url = f'https://api.weatherapi.com/v1/current.json?key={api_key}&q={location_request['loc']}&aqi=no'
+        weather_url = f'https://api.weatherapi.com/v1/current.json?key={api_key}&q={location_request["loc"]}&aqi=no'
     except Exception as e:
         return jsonify({'error': f"API Error"})
     
