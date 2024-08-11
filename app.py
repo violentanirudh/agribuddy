@@ -72,9 +72,9 @@ def bank_and_loans():
 
 @app.route('/weather')
 def weather():
-    verification = verify_login()
-    if verification is not True:
-        return verification
+    # verification = verify_login()
+    # if verification is not True:
+    #     return verification
 
     return render_template('weather.html', title="Weather", page='weather')
 
@@ -121,7 +121,7 @@ def api_weather_data():
         location_request = location_request.json()
         weather_url = f'https://api.weatherapi.com/v1/current.json?key={api_key}&q={location_request["loc"]}&aqi=no'
     except Exception as e:
-        return jsonify({'error': f"API Error"})
+        return jsonify({'error': f"API Error {e}"})
     
     try:
         # Fetch weather data
